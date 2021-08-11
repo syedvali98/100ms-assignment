@@ -3,7 +3,7 @@ import React from "react";
 
 export default function CharacterDetails({ character }) {
   return character ? (
-    <Row justify="space-between" style={{ height: "100%" }}>
+    <Row justify="space-between" style={{ height: "100%", marginTop: "20px" }}>
       <Col md={12} xs={24}>
         <Row style={{ height: "100%" }} justify="center" align="middle">
           <Col>

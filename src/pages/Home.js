@@ -1,15 +1,12 @@
-import { Col, message, Modal, Pagination, Row, Select } from "antd";
+import { Col, Empty, message, Modal, Pagination, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  GetCharacterByAttributes,
-  GetCharactersByPage,
-} from "../helpers/HomeCalls";
+import { GetCharacterByAttributes } from "../helpers/HomeCalls";
 import CharacterCard from "../components/CharacterCard";
 import CharacterDetails from "../components/CharacterDetails";
 
 const { Option } = Select;
 
-export default function Home({ loading, setLoading }) {
+export default function Home({ setLoading }) {
   //character states
   const [characters, setCharacters] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState();
@@ -20,15 +17,22 @@ export default function Home({ loading, setLoading }) {
 
   //categories states
   const [categories] = useState(["Breaking Bad", "Better Call Saul"]);
+  const [attributeKey, setAttributeKey] = useState();
+  const [attributeValue, setAttributeValue] = useState();
 
   //pagination states
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCharacters] = useState(62);
+  const [totalCharacters, setTotalCharacters] = useState(62);
 
   useEffect(() => {
     setLoading(true);
-    GetCharactersByPage(pageSize, currentPage)
+    GetCharacterByAttributes(
+      attributeKey,
+      attributeValue,
+      pageSize,
+      currentPage
+    )
       .then((a) => {
         setCharacters(a.data);
         setLoading(false);
@@ -38,7 +42,7 @@ export default function Home({ loading, setLoading }) {
         message.error("Something went wrong");
         setLoading(false);
       });
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, attributeKey, attributeValue]);
 
   const searchCharacterByName = (name) => {
     setSearchString(name);
@@ -53,28 +57,38 @@ export default function Home({ loading, setLoading }) {
       });
   };
 
+  const setTotalCharactersLength = (category) => {
+    if (category.length) {
+      if (category.length === 1) {
+        if (category[0] === "Breaking Bad") {
+          setTotalCharacters(57);
+        } else {
+          setTotalCharacters(12);
+        }
+        return;
+      }
+      if (category.length === 2) {
+        setTotalCharacters(7);
+        return;
+      }
+    } else {
+      setTotalCharacters(62);
+    }
+  };
+
   const searchCharactersByCategory = (category) => {
     if (category.length) {
-      GetCharacterByAttributes("category", String(category))
-        .then((a) => {
-          setCharacters(a.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          message.error("Something went wrong");
-          setLoading(false);
-        });
+      setAttributeKey("category");
+      if (category.length === 2) {
+        setAttributeValue(String(["Breaking Bad", " Better Call Saul"]));
+      } else {
+        setAttributeValue(String(category));
+      }
     } else {
-      GetCharactersByPage(pageSize, currentPage)
-        .then((a) => {
-          setCharacters(a.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          message.error("Something went wrong");
-          setLoading(false);
-        });
+      setAttributeKey();
+      setAttributeValue();
     }
+    setTotalCharactersLength(category);
   };
 
   return (
@@ -125,13 +139,19 @@ export default function Home({ loading, setLoading }) {
       </Col>
       <Col span={22}>
         <Row justify="center" gutter={[15, 15]}>
-          {characters.map((character, index) => (
-            <CharacterCard
-              character={character}
-              key={index}
-              setSelectedCharacter={setSelectedCharacter}
-            />
-          ))}
+          {characters.length ? (
+            characters.map((character, index) => (
+              <CharacterCard
+                character={character}
+                key={index}
+                setSelectedCharacter={setSelectedCharacter}
+              />
+            ))
+          ) : (
+            <Col>
+              <Empty />
+            </Col>
+          )}
         </Row>
       </Col>
       <Col span={22}>

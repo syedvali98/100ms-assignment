@@ -13,7 +13,7 @@ export default function HomeLayout() {
           <Navbar />
         </Col>
         <Col span={24}>
-          <Home loading={loading} setLoading={setLoading} />
+          <Home setLoading={setLoading} />
         </Col>
         <Col span={24}>
           <Footer />

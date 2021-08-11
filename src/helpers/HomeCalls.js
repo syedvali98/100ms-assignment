@@ -2,12 +2,12 @@ import axios from "axios";
 
 const baseUrl = "https://www.breakingbadapi.com/api/";
 
-export const GetCharactersByPage = (pageSize, page) => {
+export const GetCharacterByAttributes = (attribute, name, pageSize, page) => {
+  let searchString = name ? name.replace(/ /g, "+") : "";
   let offset = (page - 1) * pageSize;
-  return axios.get(`${baseUrl}characters?limit=${pageSize}&offset=${offset}`);
-};
-
-export const GetCharacterByAttributes = (attribute, name) => {
-  let searchString = name.replace(/ /g, "+");
-  return axios.get(`${baseUrl}characters?${attribute}=${searchString}`);
+  return axios.get(
+    `${baseUrl}characters?limit=${pageSize}&offset=${offset}${
+      attribute ? `&${attribute}=${searchString}` : ""
+    }`
+  );
 };
