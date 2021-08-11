@@ -8,13 +8,6 @@ export const GetCharactersByPage = (pageSize, page) => {
 };
 
 export const GetCharacterByAttributes = (attribute, name) => {
-  //   alert(name);
   let searchString = name.replace(/ /g, "+");
   return axios.get(`${baseUrl}characters?${attribute}=${searchString}`);
-};
-
-export const GetAllCategories = () => {
-  return axios.get(`${baseUrl}characters`).then((a) => {
-    return [...new Set(a.data.map((e) => e.category))];
-  });
 };

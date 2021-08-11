@@ -1,4 +1,4 @@
-import { Col, Modal, Pagination, Row, Select } from "antd";
+import { Col, message, Modal, Pagination, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   GetCharacterByAttributes,
@@ -10,6 +10,7 @@ import CharacterDetails from "../components/CharacterDetails";
 const { Option } = Select;
 
 export default function Home({ loading, setLoading }) {
+  //character states
   const [characters, setCharacters] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState();
 
@@ -23,41 +24,66 @@ export default function Home({ loading, setLoading }) {
   //pagination states
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalCharacters = 62; //defining total characters for the use of pagination
+  const [totalCharacters, setTotalCharacters] = useState(62);
 
   useEffect(() => {
-    GetCharactersByPage(pageSize, currentPage).then((a) => {
-      setCharacters(a.data);
-    });
+    setLoading(true);
+    GetCharactersByPage(pageSize, currentPage)
+      .then((a) => {
+        setCharacters(a.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("Something went wrong");
+        setLoading(false);
+      });
   }, [currentPage, pageSize]);
 
   const searchCharacterByName = (name) => {
     setSearchString(name);
-    GetCharacterByAttributes("name", String(name)).then((a) => {
-      setSearchResults(a.data);
-    });
+    GetCharacterByAttributes("name", String(name))
+      .then((a) => {
+        setSearchResults(a.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("Something went wrong");
+        setLoading(false);
+      });
   };
 
   const searchCharactersByCategory = (category) => {
     if (category.length) {
-      GetCharacterByAttributes("category", String(category)).then((a) => {
-        setCharacters(a.data);
-      });
+      GetCharacterByAttributes("category", String(category))
+        .then((a) => {
+          setCharacters(a.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          message.error("Something went wrong");
+          setLoading(false);
+        });
     } else {
-      GetCharactersByPage(pageSize, currentPage).then((a) => {
-        setCharacters(a.data);
-      });
+      GetCharactersByPage(pageSize, currentPage)
+        .then((a) => {
+          setCharacters(a.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          message.error("Something went wrong");
+          setLoading(false);
+        });
     }
   };
 
   return (
     <Row justify="center">
-      <Col span={22}>
+      <Col style={{ margin: "25px 0" }} span={22}>
         <Row gutter={[10, 10]} justify="center">
           <Col md={10} sm={24} xs={24}>
             <Select
               showSearch
-              //   value={searchString}
               placeholder="Search characters here"
               defaultActiveFirstOption={false}
               filterOption={false}
@@ -71,6 +97,9 @@ export default function Home({ loading, setLoading }) {
                   <p>Say a name</p>
                 )
               }
+              onSelect={(character) => {
+                setSelectedCharacter(searchResults[character]);
+              }}
             >
               {searchResults.map((result, index) => (
                 <Option key={index}>{result.name}</Option>
@@ -83,7 +112,6 @@ export default function Home({ loading, setLoading }) {
               allowClear
               style={{ width: "100%" }}
               placeholder="Filter by categories"
-              //   defaultValue={categories}
               onChange={searchCharactersByCategory}
             >
               {categories.map((category, index) => (
@@ -107,7 +135,7 @@ export default function Home({ loading, setLoading }) {
         </Row>
       </Col>
       <Col span={22}>
-        <Row justify="center" align="bottom">
+        <Row style={{ margin: "15px 0" }} justify="center" align="bottom">
           <Pagination
             pageSize={pageSize}
             current={currentPage}
@@ -122,8 +150,11 @@ export default function Home({ loading, setLoading }) {
       <Modal
         visible={selectedCharacter}
         onCancel={() => setSelectedCharacter()}
+        footer={null}
+        style={{ top: 20 }}
+        width="1100px"
       >
-        <CharacterDetails />
+        <CharacterDetails character={selectedCharacter} />
       </Modal>
     </Row>
   );
