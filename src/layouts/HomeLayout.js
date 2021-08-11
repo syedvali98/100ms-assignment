@@ -1,7 +1,6 @@
-import { Layout, Spin, Row, Col } from "antd";
+import { Spin, Row, Col } from "antd";
 import React, { useState } from "react";
 import Home from "../pages/Home";
-import CategoryFilter from "../components/CategoryFilter";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 

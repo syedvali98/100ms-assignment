@@ -1,7 +1,6 @@
-import { Col, Empty, Modal, Pagination, Row, Select } from "antd";
+import { Col, Modal, Pagination, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import {
-  GetAllCategories,
   GetCharacterByAttributes,
   GetCharactersByPage,
 } from "../helpers/HomeCalls";
@@ -19,10 +18,7 @@ export default function Home({ loading, setLoading }) {
   const [searchResults, setSearchResults] = useState([]);
 
   //categories states
-  const [categories, setCategories] = useState([
-    "Breaking Bad",
-    "Better Call Saul",
-  ]);
+  const [categories] = useState(["Breaking Bad", "Better Call Saul"]);
 
   //pagination states
   const [pageSize, setPageSize] = useState(10);
