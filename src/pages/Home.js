@@ -24,7 +24,7 @@ export default function Home({ loading, setLoading }) {
   //pagination states
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCharacters, setTotalCharacters] = useState(62);
+  const [totalCharacters] = useState(62);
 
   useEffect(() => {
     setLoading(true);
